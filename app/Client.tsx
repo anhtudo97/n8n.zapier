@@ -5,7 +5,7 @@ import { authClient } from '@/lib/auth-client'
 import { useTRPC } from '@/trpc/client'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-export function Client() {
+export const Client = () => {
     const trpc = useTRPC()
     const { data: session } = authClient.useSession()
     const { data } = useSuspenseQuery(trpc.getUsers.queryOptions())
