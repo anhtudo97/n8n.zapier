@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { authClient } from "@/lib/auth-client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 import z from "zod"
 
 const loginSchema = z.object({
@@ -29,9 +31,21 @@ export const LoginForm = () => {
 
     const onSubmit = async (values: LoginFormValues) => {
         // Handle login logic here
-        console.log("Logging in with", values)
-        // After successful login, redirect or update UI as needed
-        router.push("/")
+        await authClient.signIn.email({
+            email: values.email,
+            password: values.password,
+            callbackURL: "/",
+        },
+            {
+                onSuccess: () => {
+                    router.push("/")
+                },
+                onError: ({ error }) => {
+                    console.error("Login failed:", error)
+                    toast.error(`Login failed: ${error.message}`)
+                }
+            }
+        )
     }
 
     const isPending = form.formState.isSubmitting
@@ -111,7 +125,7 @@ export const LoginForm = () => {
                                     </Button>
                                 </div>
                                 <div className="text-center text-sm">
-                                    Don&apos;t have an account? <a href="/signup" className="text-primary underline underline-offset-4">Sign up</a>
+                                    Don&apos;t have an account? <a href="/register" className="text-primary underline underline-offset-4">Sign up</a>
                                 </div>
                             </div>
                         </form>

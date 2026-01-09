@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { authClient } from "@/lib/auth-client"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 import z from "zod"
 
 const registerSchema = z.object({
@@ -33,10 +35,23 @@ export const RegisterForm = () => {
     })
 
     const onSubmit = async (values: RegisterFormValues) => {
-        // Handle login logic here
-        console.log("Logging in with", values)
-        // After successful login, redirect or update UI as needed
-        router.push("/")
+        // Handle registration logic here
+        await authClient.signUp.email({
+            email: values.email,
+            password: values.password,
+            name: values.email,
+            callbackURL: "/",
+        },
+            {
+                onSuccess: () => {
+                    router.push("/")
+                },
+                onError: ({ error }) => {
+                    console.error("Registration failed:", error)
+                    toast.error(`Registration failed: ${error.message}`)
+                }
+            }
+        )
     }
 
     const isPending = form.formState.isSubmitting
@@ -130,7 +145,7 @@ export const RegisterForm = () => {
 
                                     />
                                     <Button type="submit" className="w-full" disabled={isPending}>
-                                        {isPending ? "Logging in..." : "Login"}
+                                        {isPending ? "Creating account..." : "Create Account"}
                                     </Button>
                                 </div>
                                 <div className="text-center text-sm">
