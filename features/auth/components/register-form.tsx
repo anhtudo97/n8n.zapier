@@ -6,6 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { authClient } from "@/lib/auth-client"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -78,6 +79,7 @@ export const RegisterForm = () => {
                                         type="button"
                                         disabled={isPending}
                                     >
+                                        <Image src={"/logos/github.svg"} alt="Github logo" width={20} height={20} className="mr-2" />
                                         Continue with Github
                                     </Button>
                                     <Button
@@ -86,6 +88,7 @@ export const RegisterForm = () => {
                                         type="button"
                                         disabled={isPending}
                                     >
+                                        <Image src={"/logos/google.svg"} alt="Google logo" width={20} height={20} className="mr-2" />
                                         Continue with Google
                                     </Button>
                                 </div>
