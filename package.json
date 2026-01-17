@@ -14,7 +14,7 @@
     "db:migrate": "npx prisma migrate dev",
     "db:push": "npx prisma db push",
     "db:seed": "npx prisma db seed",
-    "inngest:dev": "npx --ignore-scripts=false inngest-cli@latest dev",
+    "inngest:dev": "inngest-cli dev",
     "dev:all": "mprocs"
   },
   "dependencies": {
@@ -89,6 +89,7 @@
     "eslint-config-next": "16.1.1",
     "husky": "^9.1.7",
     "inngest-cli": "^1.16.0",
+    "mprocs": "^0.8.2",
     "prettier": "^3.7.4",
     "prisma": "^7.2.0",
     "tailwindcss": "^4",
