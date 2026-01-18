@@ -16,7 +16,7 @@ export const Client = () => {
             JSON.stringify(session, null, 2)
         }
         <Button onClick={async () => {
-            const result = await testAi.mutate()
+            await testAi.mutate()
         }}>
             Test AI
         </Button>
