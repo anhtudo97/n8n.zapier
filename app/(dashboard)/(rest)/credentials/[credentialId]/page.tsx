@@ -1,3 +1,4 @@
+import { requireAuth } from '@/lib/auth-utils'
 import React from 'react'
 
 interface PageProps {
@@ -5,7 +6,7 @@ interface PageProps {
 }
 
 const Page = async ({ params }: PageProps) => {
-    
+    await requireAuth()
     const { credentialId } = await params
 
     return (

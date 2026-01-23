@@ -1,9 +1,11 @@
-import React from 'react'
+import { requireAuth } from "@/lib/auth-utils"
 
-const Page = () => {
+const Page = async () => {
+  await requireAuth()
+
   return (
     <div>
-        Workflows Page
+      Workflows Page
     </div>
   )
 }
