@@ -2,7 +2,7 @@ import { AppSidebar } from '@/components/app-sidebar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { PropsWithChildren } from 'react'
 
-const layout = ({ children }: PropsWithChildren) => {
+const Layout = ({ children }: PropsWithChildren) => {
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -13,4 +13,4 @@ const layout = ({ children }: PropsWithChildren) => {
     )
 }
 
-export default layout
+export default Layout

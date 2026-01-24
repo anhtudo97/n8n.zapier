@@ -1,12 +1,11 @@
 "use client"
 
-import { CreditCardIcon, FolderOpenIcon, HistoryIcon, KeyIcon, LogOutIcon, StarIcon } from 'lucide-react'
-import React from 'react'
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar'
-import Link from 'next/link'
-import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
 import { authClient } from '@/lib/auth-client'
+import { CreditCardIcon, FolderOpenIcon, HistoryIcon, KeyIcon, LogOutIcon, StarIcon } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './ui/sidebar'
 
 const menuItems = [
     {
@@ -43,7 +42,6 @@ export const AppSidebar = () => {
                 }
             }
         })
-        router.refresh()
     }
 
     return (
@@ -60,7 +58,7 @@ export const AppSidebar = () => {
             </SidebarHeader>
             <SidebarContent>
                 {
-                    menuItems.map((group, index) => (
+                    menuItems.map((group) => (
                         <SidebarGroup key={group.title}>
                             <SidebarGroupContent>
                                 <SidebarMenu>
@@ -95,7 +93,6 @@ export const AppSidebar = () => {
                         <SidebarMenuButton
                             tooltip={"Upgrade to Pro"}
                             className='gap-x-4 h-10 px-4'
-                            onClick={() => router.push("/pricing")}
                         >
                             <StarIcon className='size-4' />
                             <span>Upgrade to Pro</span>
@@ -105,7 +102,6 @@ export const AppSidebar = () => {
                         <SidebarMenuButton
                             tooltip={"Billing portal"}
                             className='gap-x-4 h-10 px-4'
-                            onClick={() => router.push("/pricing")}
                         >
                             <CreditCardIcon className='size-4' />
                             <span>Billing Portal</span>

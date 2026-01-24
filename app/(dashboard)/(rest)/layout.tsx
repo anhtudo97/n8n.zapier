@@ -1,7 +1,7 @@
 import { AppHeader } from '@/components/app-header'
 import { PropsWithChildren } from 'react'
 
-const layout = ({ children }: PropsWithChildren) => {
+const Layout = ({ children }: PropsWithChildren) => {
     return (
         <>
             <AppHeader />
@@ -12,4 +12,4 @@ const layout = ({ children }: PropsWithChildren) => {
     )
 }
 
-export default layout
+export default Layout
