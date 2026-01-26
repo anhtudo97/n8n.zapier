@@ -3,24 +3,23 @@ import { auth } from "./auth"
 import { redirect } from "next/navigation"
 
 export const requireAuth = async () => {
-    const session = await auth.api.getSession({
-        headers: await headers()
-    })
-    console.log(session)
-    if (!session) {
-        redirect('/login')
-    }
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+  console.log(session)
+  if (!session) {
+    redirect("/login")
+  }
 
-    return session
+  return session
 }
 
 export const requireUnauth = async () => {
-    const session = await auth.api.getSession({
-        headers: await headers()
-    })
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
 
-    if (session) {
-        redirect('/')
-    }
-
+  if (session) {
+    redirect("/")
+  }
 }

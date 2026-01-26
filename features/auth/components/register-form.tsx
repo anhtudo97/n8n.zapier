@@ -12,153 +12,130 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import z from "zod"
 
-const registerSchema = z.object({
+const registerSchema = z
+  .object({
     email: z.string().email("Invalid email address"),
     password: z.string().min(1, "Password is required"),
-    confirmPassword: z.string().min(1, "Confirm Password is required"),
-}).refine((data) => data.password === data.confirmPassword, {
+    confirmPassword: z.string().min(1, "Confirm Password is required")
+  })
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"],
-})
+    path: ["confirmPassword"]
+  })
 
 type RegisterFormValues = z.infer<typeof registerSchema>
 
 export const RegisterForm = () => {
-    const router = useRouter()
+  const router = useRouter()
 
-    const form = useForm<RegisterFormValues>({
-        resolver: zodResolver(registerSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-            confirmPassword: "",
-        },
-    })
-
-    const onSubmit = async (values: RegisterFormValues) => {
-        // Handle registration logic here
-        await authClient.signUp.email({
-            email: values.email,
-            password: values.password,
-            name: values.email,
-            callbackURL: "/",
-        },
-            {
-                onSuccess: () => {
-                    router.push("/")
-                },
-                onError: ({ error }) => {
-                    console.error("Registration failed:", error)
-                    toast.error(`Registration failed: ${error.message}`)
-                }
-            }
-        )
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: ""
     }
+  })
 
-    const isPending = form.formState.isSubmitting
-
-    return (
-        <div className="flex flex-col gap-6">
-            <Card>
-                <CardHeader className="text-center">
-                    <CardTitle>
-                        Get started by creating your account.
-                    </CardTitle>
-                    <CardDescription>
-                        Registration form will be here.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
-                            <div className="grid gap-6">
-                                <div className="flex flex-col gap-4">
-                                    <Button
-                                        variant={"outline"}
-                                        className="w-full"
-                                        type="button"
-                                        disabled={isPending}
-                                    >
-                                        <Image src={"/logos/github.svg"} alt="Github logo" width={20} height={20} className="mr-2" />
-                                        Continue with Github
-                                    </Button>
-                                    <Button
-                                        variant={"outline"}
-                                        className="w-full"
-                                        type="button"
-                                        disabled={isPending}
-                                    >
-                                        <Image src={"/logos/google.svg"} alt="Google logo" width={20} height={20} className="mr-2" />
-                                        Continue with Google
-                                    </Button>
-                                </div>
-                                <div className="grid gap-6">
-                                    <FormField
-                                        control={form.control}
-                                        name="email"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Email</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="email"
-                                                        placeholder="m@example.com"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="password"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Password</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="password"
-                                                        placeholder="**********"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="confirmPassword"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Confirm Password</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="password"
-                                                        placeholder="**********"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-
-                                    />
-                                    <Button type="submit" className="w-full" disabled={isPending}>
-                                        {isPending ? "Creating account..." : "Create Account"}
-                                    </Button>
-                                </div>
-                                <div className="text-center text-sm">
-                                    Already have an account? <a href="/login" className="text-primary underline">Login</a>
-                                </div>
-                            </div>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
-        </div>
+  const onSubmit = async (values: RegisterFormValues) => {
+    // Handle registration logic here
+    await authClient.signUp.email(
+      {
+        email: values.email,
+        password: values.password,
+        name: values.email,
+        callbackURL: "/"
+      },
+      {
+        onSuccess: () => {
+          router.push("/")
+        },
+        onError: ({ error }) => {
+          console.error("Registration failed:", error)
+          toast.error(`Registration failed: ${error.message}`)
+        }
+      }
     )
+  }
+
+  const isPending = form.formState.isSubmitting
+
+  return (
+    <div className="flex flex-col gap-6">
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle>Get started by creating your account.</CardTitle>
+          <CardDescription>Registration form will be here.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="grid gap-6">
+                <div className="flex flex-col gap-4">
+                  <Button variant={"outline"} className="w-full" type="button" disabled={isPending}>
+                    <Image src={"/logos/github.svg"} alt="Github logo" width={20} height={20} className="mr-2" />
+                    Continue with Github
+                  </Button>
+                  <Button variant={"outline"} className="w-full" type="button" disabled={isPending}>
+                    <Image src={"/logos/google.svg"} alt="Google logo" width={20} height={20} className="mr-2" />
+                    Continue with Google
+                  </Button>
+                </div>
+                <div className="grid gap-6">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="m@example.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="**********" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirm Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="**********" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" className="w-full" disabled={isPending}>
+                    {isPending ? "Creating account..." : "Create Account"}
+                  </Button>
+                </div>
+                <div className="text-center text-sm">
+                  Already have an account?{" "}
+                  <a href="/login" className="text-primary underline">
+                    Login
+                  </a>
+                </div>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
+  )
 }

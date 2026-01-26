@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "prepare": "husky",
+    "prettier": "prettier --write .",
     "commitlint": "commitlint --edit",
     "db:generate": "npx prisma generate",
     "db:studio": "npx prisma studio",
