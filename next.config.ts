@@ -9,8 +9,8 @@ const nextConfig: NextConfig = {
       {
         source: "/",
         destination: "/workflows",
-        permanent: false,
-      },
+        permanent: false
+      }
     ]
   }
 }
@@ -48,7 +48,7 @@ export default withSentryConfig(nextConfig, {
     // Tree-shaking options for reducing bundle size
     treeshake: {
       // Automatically tree-shake Sentry logger statements to reduce bundle size
-      removeDebugLogging: true,
-    },
+      removeDebugLogging: true
+    }
   }
 })
