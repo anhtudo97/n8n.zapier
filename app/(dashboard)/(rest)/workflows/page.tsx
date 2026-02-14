@@ -1,9 +1,10 @@
+import { WorkflowsList } from "@/features/workflows/components/workflows"
 import { requireAuth } from "@/lib/auth-utils"
 
 const Page = async () => {
   await requireAuth()
 
-  return <div>Workflows Page</div>
+  return <WorkflowsList />
 }
 
 export default Page
