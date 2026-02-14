@@ -29,8 +29,8 @@ export const workflowsRouter = createTRPCRouter({
                 name: z.string().min(1),
             })
         )
-        .mutation(async ({ ctx, input }) => {
-            return await prisma.workflow.update({
+        .mutation(({ ctx, input }) => {
+            return prisma.workflow.update({
                 where: {
                     id: input.id,
                     userId: ctx.auth.user.id,
@@ -42,8 +42,8 @@ export const workflowsRouter = createTRPCRouter({
         }),
     getOne: protectedProcedure
         .input(z.object({ id: z.string() }))
-        .query(async ({ ctx, input }) => {
-            return await prisma.workflow.findUnique({
+        .query(({ ctx, input }) => {
+            return prisma.workflow.findUnique({
                 where: {
                     id: input.id,
                     userId: ctx.auth.user.id,
@@ -51,8 +51,8 @@ export const workflowsRouter = createTRPCRouter({
             })
         }),
     getMany: protectedProcedure
-        .query(async ({ ctx }) => {
-            return await prisma.workflow.findMany({
+        .query(({ ctx }) => {
+            return prisma.workflow.findMany({
                 where: {
                     userId: ctx.auth.user.id,
                 },
