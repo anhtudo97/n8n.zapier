@@ -1,4 +1,4 @@
-import { WorkflowsList } from "@/features/workflows/components/workflows"
+import { WorkflowsContainer, WorkflowsList } from "@/features/workflows/components/workflows"
 import { prefetchWorkflows } from "@/features/workflows/server/prefetch"
 import { requireAuth } from "@/lib/auth-utils"
 import { HydrateClient } from "@/trpc/server"
@@ -11,13 +11,15 @@ const Page = async () => {
   prefetchWorkflows() // Prefetch workflows on the server before rendering the page
 
   return (
-    <HydrateClient>
-      <ErrorBoundary fallback={<div>Something went wrong</div>}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <WorkflowsList />
-        </Suspense>
-      </ErrorBoundary>
-    </HydrateClient>
+    <WorkflowsContainer>
+      <HydrateClient>
+        <ErrorBoundary fallback={<div>Something went wrong</div>}>
+          <Suspense fallback={<div>Loading...</div>}>
+            <WorkflowsList />
+          </Suspense>
+        </ErrorBoundary>
+      </HydrateClient>
+    </WorkflowsContainer>
   )
 }
 
