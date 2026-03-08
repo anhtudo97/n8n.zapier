@@ -7,7 +7,6 @@ const Page = async () => {
   await requireAuth()
 
   const queryClient = getQueryClient()
-  void queryClient.prefetchQuery(trpc.getUsers.queryOptions())
   return (
     <div className="min-h-screen min-w-screen flex items-center justify-center">
       <HydrationBoundary state={dehydrate(queryClient)}>
