@@ -1,10 +1,41 @@
 "use client"
 
-import { EntityContainer, EntityHeader } from '@/components/entity-components'
-import { useCreateWorkflow, useSuspenseWorkflows } from '../hooks/use-workflows'
-import { PropsWithChildren } from 'react'
+import { EntityContainer, EntityHeader, EntityPagination, EntitySearch } from '@/components/entity-components'
+import { useEntitySearch } from '@/hooks/use-entity-search'
 import { useUpgradeModal } from '@/hooks/use-upgrade-modal'
 import { useRouter } from 'next/navigation'
+import { PropsWithChildren } from 'react'
+import { useCreateWorkflow, useSuspenseWorkflows } from '../hooks/use-workflows'
+import { useWorkflowsParams } from '../hooks/use-workflows-params'
+
+export const WorkflosSearch = () => {
+    const [params, setParams] = useWorkflowsParams()
+    const { searchValue, onSearchChange } = useEntitySearch({
+        params,
+        setParams,
+    })
+    return (
+        <EntitySearch
+            value={searchValue}
+            onChange={onSearchChange}
+            placeholder="Search workflows..."
+
+        />
+    )
+}
+
+export const WorkflowsPagination = () => {
+    const [params, setParams] = useWorkflowsParams()
+    const workflows = useSuspenseWorkflows()
+    return (
+        <EntityPagination
+            disabled={workflows.isFetching}
+            totalPages={workflows.data.totalPages}
+            page={workflows.data.page}
+            onPageChange={(page) => setParams({ ...params, page })}
+        />
+    )
+}
 
 export const WorkflowsList = () => {
     const workflows = useSuspenseWorkflows()
@@ -53,8 +84,8 @@ export const WorkflowsContainer = ({ children }: PropsWithChildren) => {
     return (
         <EntityContainer
             header={<WorkflowsHeader />}
-            search={<></>}
-            pagination={<></>}
+            search={<WorkflosSearch />}
+            pagination={<WorkflowsPagination />}
         >
             {children}
         </EntityContainer>
