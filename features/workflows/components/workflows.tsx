@@ -1,6 +1,6 @@
 "use client"
 
-import { EntityContainer, EntityHeader, EntityPagination, EntitySearch, LoadingView } from '@/components/entity-components'
+import { EntityContainer, EntityHeader, EntityPagination, EntitySearch, ErrorView, LoadingView } from '@/components/entity-components'
 import { useEntitySearch } from '@/hooks/use-entity-search'
 import { useUpgradeModal } from '@/hooks/use-upgrade-modal'
 import { useRouter } from 'next/navigation'
@@ -93,5 +93,9 @@ export const WorkflowsContainer = ({ children }: PropsWithChildren) => {
 }
 
 export const WorkflowsLoading = () => {
-    return <LoadingView entity="workflows" message="Loading workflows..." />
+    return <LoadingView message="Loading workflows..." />
+}
+
+export const WorkflowsError = () => {
+    return <ErrorView message="Failed to load workflows." />
 }
