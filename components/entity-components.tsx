@@ -1,7 +1,6 @@
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
-import { DropdownMenu } from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import { AlertTriangleIcon, Loader2Icon, MoreVerticalIcon, PackageOpenIcon, PlusIcon, SearchIcon, TrashIcon } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from './ui/button'
