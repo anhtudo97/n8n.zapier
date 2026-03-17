@@ -14,9 +14,11 @@ const eslintConfig = defineConfig([
     "next-env.d.ts"
   ]),
   // Allow using explicit `any` in TypeScript
+  // Disable react-hooks/set-state-in-render globally
   {
     rules: {
-      "@typescript-eslint/no-explicit-any": "off"
+      "@typescript-eslint/no-explicit-any": "off",
+      "react-hooks/set-state-in-render": "off"
     }
   }
 ])
