@@ -10,3 +10,11 @@ type Input = inferInput<typeof trpc.workflows.getMany>
 export async function prefetchWorkflows(params: Input) {
     return prefetch(trpc.workflows.getMany.queryOptions(params))
 }
+
+/**
+ * Prefetches a single workflow by its ID. This can be used to prefetch data on the server before rendering a page.
+ * @param id The ID of the workflow to prefetch.
+ */
+export async function prefetchWorkflow(id: string) {
+    return prefetch(trpc.workflows.getOne.queryOptions({ id }))
+}

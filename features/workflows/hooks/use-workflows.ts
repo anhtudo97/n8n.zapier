@@ -9,6 +9,10 @@ export const useSuspenseWorkflows = () => {
     return useSuspenseQuery(trpc.workflows.getMany.queryOptions(params))
 }
 
+/**
+ * Custom hook to create a new workflow.
+ * @returns A mutation object that can be used to trigger the creation of a new workflow.
+ */
 export const useCreateWorkflow = () => {
     const queryClient = useQueryClient()
     const trpc = useTRPC()
@@ -26,6 +30,10 @@ export const useCreateWorkflow = () => {
     )
 }
 
+/**
+ * Custom hook to remove a workflow by its ID.
+ * @returns A mutation object that can be used to trigger the removal of a workflow.
+ */
 export const useRemoveWorkflow = () => {
     const trpc = useTRPC()
     const queryClient = useQueryClient()
@@ -39,6 +47,38 @@ export const useRemoveWorkflow = () => {
             },
             onError: (error) => {
                 toast.error(`Failed to remove workflow: ${error.message}`)
+            },
+        })
+    )
+}
+
+/**
+ * Custom hook to fetch a single workflow by its ID using React Query's suspense mode.
+ * @param id The ID of the workflow to fetch.
+ * @returns The workflow data.
+ */
+export const useSuspenseWorkflow = (id: string) => {
+    const trpc = useTRPC()
+    return useSuspenseQuery(trpc.workflows.getOne.queryOptions({ id }))
+}
+
+/**
+ * Custom hook to update the name of a workflow.
+ * @returns A mutation object that can be used to trigger the update of a workflow's name.
+ */
+export const useUpdateWorkflowName = () => {
+    const queryClient = useQueryClient()
+    const trpc = useTRPC()
+
+    return useMutation(
+        trpc.workflows.updateName.mutationOptions({
+            onSuccess: (data) => {
+                toast.success(`Workflow "${data.name}" updated successfully!`)
+                queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}))
+                queryClient.invalidateQueries(trpc.workflows.getOne.queryOptions({ id: data.id }))
+            },
+            onError: (error) => {
+                toast.error(`Failed to update workflow: ${error.message}`)
             },
         })
     )
