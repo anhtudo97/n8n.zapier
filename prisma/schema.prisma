@@ -93,7 +93,6 @@ model Workflow {
 
 enum NodeType {
   INITIAL
-  ACTION
 }
 
 model Node {
