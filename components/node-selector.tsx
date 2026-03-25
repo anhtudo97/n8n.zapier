@@ -2,10 +2,13 @@
 
 import { NodeType } from "@/generated/prisma/enums"
 import { GlobeIcon, MousePointerIcon } from "lucide-react"
-import { ComponentType, PropsWithChildren } from "react"
+import { ComponentType, PropsWithChildren, useCallback } from "react"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet"
 import Image from "next/image"
 import { Separator } from "./ui/separator"
+import { useReactFlow } from "@xyflow/react"
+import { toast } from "sonner"
+import { createId } from "@paralleldrive/cuid2"
 
 export type NodeTypeOption = {
     type: NodeType
@@ -38,6 +41,53 @@ interface NodeSelectorProps {
 }
 
 export const NodeSelector = ({ open, onOpenChange, children }: NodeSelectorProps & PropsWithChildren) => {
+
+    const { setNodes, getNodes, screenToFlowPosition } = useReactFlow()
+
+    const handleNodeSelect = useCallback((selection: NodeTypeOption) => {
+        if (selection.type === NodeType.MANUAL_TRIGGER) {
+            const nodes = getNodes()
+            const hasManualTrigger = nodes.some(node => node.type === NodeType.MANUAL_TRIGGER)
+
+            if (hasManualTrigger) {
+                toast.error("You can only have one manual trigger node in your workflow.")
+                return
+            }
+        }
+
+        setNodes((nodes) => {
+            const hasInitalNode = nodes.some(node => node.type === NodeType.INITIAL)
+
+            const centerX = window.innerWidth / 2
+            const centerY = window.innerHeight / 2
+
+            const flowPosition = screenToFlowPosition({
+                x: centerX + (Math.random() - 0.5) * 200, // Add some random offset to avoid overlap
+                y: centerY + (Math.random() - 0.5) * 200 // Add some random offset to avoid overlap
+            })
+
+            const newNode = {
+                id: createId(),
+                data: {},
+                position: flowPosition,
+                type: selection.type
+            }
+
+            if (hasInitalNode) {
+                return [newNode]
+            }
+
+            return [...nodes, newNode]
+        })
+
+        onOpenChange(false)
+    }, [
+        setNodes,
+        getNodes,
+        screenToFlowPosition,
+        onOpenChange
+    ])
+
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetTrigger asChild>
@@ -62,7 +112,7 @@ export const NodeSelector = ({ open, onOpenChange, children }: NodeSelectorProps
                                 <div
                                     key={node.type}
                                     className="w-full justify-start h-auto py-5 px-4 rounded-none cursor-pointer border-l-2 border-transparent hover:border-l-primary"
-                                    onClick={() => { }}
+                                    onClick={() => handleNodeSelect(node)}
                                 >
                                     <div className="flex items-center gap-6 w-full overflow-hidden">
                                         {
@@ -96,7 +146,7 @@ export const NodeSelector = ({ open, onOpenChange, children }: NodeSelectorProps
                                 <div
                                     key={node.type}
                                     className="w-full justify-start h-auto py-5 px-4 rounded-none cursor-pointer border-l-2 border-transparent hover:border-l-primary"
-                                    onClick={() => { }}
+                                    onClick={() => handleNodeSelect(node)}
                                 >
                                     <div className="flex items-center gap-6 w-full overflow-hidden">
                                         {

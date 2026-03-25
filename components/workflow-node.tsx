@@ -13,7 +13,7 @@ interface WorkflowNodeProps {
     description?: string
 }
 
-export const WorkflowNode: React.FC<WorkflowNodeProps & PropsWithChildren> = ({ children, showToolbar, onDelete, onSettings, name, description }) => {
+export const WorkflowNode: React.FC<WorkflowNodeProps & PropsWithChildren> = ({ children, showToolbar = true, onDelete, onSettings, name, description }) => {
     return (
         <>
             {

@@ -1,7 +1,7 @@
 import type { NodeProps } from '@xyflow/react'
 import { PlusIcon } from 'lucide-react'
 import { memo, useState } from 'react'
-import { PlaceholderNode } from './placeholder-node'
+import { PlaceholderNode } from './react-flow/placeholder-node'
 import { WorkflowNode } from './workflow-node'
 import { NodeSelector } from './node-selector'
 
