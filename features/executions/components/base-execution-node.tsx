@@ -1,6 +1,6 @@
 "use client"
 
-import { NodeProps, Position } from '@xyflow/react'
+import { NodeProps, Position, useReactFlow } from '@xyflow/react'
 import { LucideIcon } from 'lucide-react'
 import Image from 'next/image'
 import { memo, PropsWithChildren } from 'react'
@@ -20,8 +20,11 @@ interface BaseExecutionNodeProps extends NodeProps {
 export const BaseExecutionNode = memo(
     ({ id, icon: Icon, name, description, onSettings, onDoubleClick, children }: BaseExecutionNodeProps & PropsWithChildren) => {
 
-        const handleDelete = () => {
+        const { setEdges, setNodes } = useReactFlow()
 
+        const handleDelete = () => {
+            setNodes((nodes) => nodes.filter((node) => node.id !== id))
+            setEdges((edges) => edges.filter((edge) => edge.source !== id && edge.target !== id))
         }
 
         return (
