@@ -27,7 +27,7 @@ export const Editor = ({ workflowId }: EditorProps) => {
 
     const [nodes, setNodes] = useState<Node[]>(workflow.nodes)
     const [edges, setEdges] = useState<Edge[]>(workflow.edges)
-    
+
     const setEditor = useSetAtom(editorAtom)
 
     const onNodesChange = useCallback(
@@ -54,6 +54,11 @@ export const Editor = ({ workflowId }: EditorProps) => {
                 nodeTypes={nodeComponents}
                 onInit={setEditor}
                 fitView
+                snapGrid={[10, 10]}
+                snapToGrid
+                panOnScroll
+                panOnDrag={false}
+                selectionOnDrag
             >
                 <Background />
                 <Controls />
