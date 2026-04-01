@@ -5,7 +5,7 @@ import { memo, useState } from 'react'
 import { BaseExecutionNode } from '../base-execution-node'
 import { GlobeIcon } from 'lucide-react'
 import { NodeStatus } from '@/components/react-flow/node-status-indicator'
-import { HttpRequestDialog } from './dialog'
+import { FormType, HttpRequestDialog } from './dialog'
 
 type HttpRequestNodeData = {
     endpoint?: string
@@ -29,7 +29,7 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
         setDialogOpen(true)
     }
 
-    const handleSubmit = (values: { endpoint: string, method: string, body?: string }) => {
+    const handleSubmit = (values: FormType) => {
         setNodes((nodes) =>
             nodes.map((node) => {
                 if (node.id === props.id) {

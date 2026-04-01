@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import z from "zod"
 
@@ -16,6 +16,8 @@ const formSchema = z.object({
     method: z.enum(["GET", "POST", "PUT", "DELETE", "PATCH"]),
     body: z.string().optional(),
 })
+
+export type FormType = z.infer<typeof formSchema>
 
 interface HttpRequestDialog {
     open: boolean
@@ -46,6 +48,17 @@ export const HttpRequestDialog = ({ open, onOpenChange, onSubmit, defaultEndpoin
         onSubmit(values)
         onOpenChange(false)
     }
+
+    useEffect(() => {
+        if (open) {
+            form.reset({
+                endpoint: defaultEndpoint,
+                method: defaultMethod,
+                body: defaultBody
+            })
+        }
+    }, [open, defaultEndpoint, defaultMethod, defaultBody, form])
+
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
