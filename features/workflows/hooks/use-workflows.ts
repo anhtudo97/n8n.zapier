@@ -105,3 +105,22 @@ export const useUpdateWorkflow = () => {
         })
     )
 }
+
+/** * Custom hook to execute a workflow.
+ * @returns A mutation object that can be used to trigger the execution of a workflow.
+ */
+export const useExecuteWorkflow = () => {
+    const trpc = useTRPC()
+
+    return useMutation(
+        trpc.workflows.excute.mutationOptions({
+            onSuccess(data) {
+                toast.success(`Workflow "${data.name}" executed successfully!`)
+            },
+            onError(error) {
+                toast.error(`Failed to execute workflow: ${error.message}`)
+            }
+        })
+    )
+}
+

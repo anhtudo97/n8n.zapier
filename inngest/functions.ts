@@ -1,23 +1,35 @@
+import { NonRetriableError } from "inngest"
 import { inngest } from "./client"
+import prisma from "@/lib/db"
 
-import { google } from "@ai-sdk/google"
-import { generateText } from "ai"
-
-export const execute = inngest.createFunction(
-  { id: "execute-ai" },
-  { event: "execute/ai" },
+export const executeWorkflow = inngest.createFunction(
+  { id: "execute-workflow" },
+  { event: "workflows/execute.workflow" },
   async ({ event, step }) => {
-    const { steps } = await step.ai.wrap("gemini-generate-text", generateText, {
-      model: google("gemini-2.5-flash"),
-      system: "You are a helpful assistant that helps users with their tasks.",
-      prompt: "What is 2 + 2?",
-      experimental_telemetry: {
-        isEnabled: true,
-        recordInputs: true,
-        recordOutputs: true
-      }
+    const workflowId = event.data.workflowId
+
+    if (!workflowId) {
+      throw new NonRetriableError("Workflow ID is required")
+    }
+
+    const nodes = await step.run("prepare-workflow", async () => {
+      const workflow = await prisma.workflow.findUniqueOrThrow({
+        where: {
+          id: workflowId,
+        },
+        include: {
+          nodes: true,
+          connections: true,
+        },
+      })
+
+      return workflow.nodes
+
     })
 
-    return steps
+    return {
+      nodes
+    }
   }
 )
+
