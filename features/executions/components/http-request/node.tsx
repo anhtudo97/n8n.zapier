@@ -20,7 +20,7 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
     const { setNodes } = useReactFlow()
 
     const description = nodeData.endpoint ? `${nodeData.method || "GET"} ${nodeData.endpoint}` : "Not configured yet"
-    const nodeStatus = "loading" as NodeStatus
+    const nodeStatus = "initial" as NodeStatus
 
     const [dialogOpen, setDialogOpen] = useState(false)
 

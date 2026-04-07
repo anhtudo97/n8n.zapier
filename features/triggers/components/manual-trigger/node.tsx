@@ -14,7 +14,7 @@ export const ManualTriggerNode = memo(
             setDialogOpen(true)
         }
 
-        const nodeStatus = "loading" as NodeStatus
+        const nodeStatus = "initial" as NodeStatus
 
         return (
             <>
