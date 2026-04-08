@@ -8,6 +8,7 @@ import { NodeStatus } from '@/components/react-flow/node-status-indicator'
 import { HttpRequestFormValues, HttpRequestDialog } from './dialog'
 
 type HttpRequestNodeData = {
+    variablesName?: string
     endpoint?: string
     method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
     body?: string

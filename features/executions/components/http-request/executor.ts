@@ -3,6 +3,7 @@ import { NodeExecutor } from "@/features/executions/types"
 import { NonRetriableError } from "inngest"
 
 type HttpRequestData = {
+    variablesName?: string
     endpoint?: string
     method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
     body?: string
@@ -12,6 +13,10 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({ data,
 
     if (!data.endpoint) {
         throw new NonRetriableError(`Endpoint is required for http-request node with id ${nodeId}`)
+    }
+
+    if (!data.variablesName) {
+        throw new NonRetriableError(`Variables name is required for http-request node with id ${nodeId}`)
     }
 
     // const result = await step.fetch(data.endpoint)
@@ -26,6 +31,9 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({ data,
 
         if (["POST", "PUT", "PATCH"].includes(method)) {
             options.body = (data.body)
+            options.headers = {
+                "Content-Type": "application/json"
+            }
         }
 
         const response = await ky(endpoint, options)
@@ -34,13 +42,24 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({ data,
             ? await response.json()
             : await response.text()
 
-        return {
-            ...context,
+        const responsePayload = {
             httpResponse: {
                 status: response.status,
                 statusText: response.statusText,
                 data: responseData
             }
+        }
+
+        if (data.variablesName) {
+            return {
+                ...context,
+                [data.variablesName]: responsePayload
+            }
+        }
+
+        return {
+            ...context,
+            ...responsePayload
         }
     })
 
