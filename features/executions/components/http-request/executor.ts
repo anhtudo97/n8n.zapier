@@ -3,6 +3,12 @@ import { NodeExecutor } from "@/features/executions/types"
 import { NonRetriableError } from "inngest"
 import Handlebars from "handlebars"
 
+Handlebars.registerHelper("json", (context) => {
+    const result = JSON.stringify(context, null, 2)
+    const safeString = new Handlebars.SafeString(result)
+    return safeString
+})
+
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
 
 type HttpRequestData = {
@@ -42,7 +48,9 @@ export const httpRequestExecutor: NodeExecutor = async ({ data, nodeId, context,
         const options: KyOptions = { method }
 
         if (["POST", "PUT", "PATCH"].includes(method)) {
-            options.body = body
+            const resolved = Handlebars.compile(body || "{}")(context)
+            JSON.parse(resolved) // Validate JSON
+            options.body = resolved
             options.headers = { "Content-Type": "application/json" }
         }
 
@@ -51,6 +59,8 @@ export const httpRequestExecutor: NodeExecutor = async ({ data, nodeId, context,
         const responseData = contentType.includes("application/json")
             ? await response.json()
             : await response.text()
+
+
 
         return {
             ...context,
