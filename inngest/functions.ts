@@ -4,11 +4,17 @@ import prisma from "@/lib/db"
 import { topologicalSort } from "./utils"
 import { NodeType } from "@/generated/prisma/enums"
 import { getExecutor } from "@/features/executions/lib/executor-registry"
+import { httpRequestChannel } from "./channels/http-request"
 
 export const executeWorkflow = inngest.createFunction(
   { id: "execute-workflow" },
-  { event: "workflows/execute.workflow" },
-  async ({ event, step }) => {
+  {
+    event: "workflows/execute.workflow",
+    channels: [
+      httpRequestChannel(),
+    ] // This is the channel we will use to send real-time updates about the execution
+  },
+  async ({ event, step, publish }) => {
     const workflowId = event.data.workflowId
 
     if (!workflowId) {
@@ -38,7 +44,8 @@ export const executeWorkflow = inngest.createFunction(
         data: node.data as Record<string, unknown>,
         nodeId: node.id,
         context,
-        step
+        step,
+        publish
       })
     }
 

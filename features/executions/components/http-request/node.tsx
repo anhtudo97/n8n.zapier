@@ -1,11 +1,13 @@
 "use client"
 
+import { httpRequestChannel } from '@/inngest/channels/http-request'
 import { Node, NodeProps, useReactFlow } from '@xyflow/react'
-import { memo, useState } from 'react'
-import { BaseExecutionNode } from '../base-execution-node'
 import { GlobeIcon } from 'lucide-react'
-import { NodeStatus } from '@/components/react-flow/node-status-indicator'
-import { HttpRequestFormValues, HttpRequestDialog } from './dialog'
+import { memo, useState } from 'react'
+import { useNodeStatus } from '../../hooks/use-node-status'
+import { BaseExecutionNode } from '../base-execution-node'
+import { fetchHttRequestRealtimeToken } from './actions'
+import { HttpRequestDialog, HttpRequestFormValues } from './dialog'
 
 type HttpRequestNodeData = {
     variablesName?: string
@@ -21,7 +23,12 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
     const { setNodes } = useReactFlow()
 
     const description = nodeData.endpoint ? `${nodeData.method || "GET"} ${nodeData.endpoint}` : "Not configured yet"
-    const nodeStatus = "initial" as NodeStatus
+    const nodeStatus = useNodeStatus({
+        nodeId: props.id,
+        channel: httpRequestChannel().name,
+        topic: "status",
+        refreshToken: fetchHttRequestRealtimeToken
+    })
 
     const [dialogOpen, setDialogOpen] = useState(false)
 

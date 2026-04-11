@@ -2,6 +2,8 @@ import ky, { type Options as KyOptions } from 'ky'
 import { NodeExecutor } from "@/features/executions/types"
 import { NonRetriableError } from "inngest"
 import Handlebars from "handlebars"
+import { httpRequestChannel } from '@/inngest/channels/http-request'
+import { Realtime } from '@inngest/realtime'
 
 Handlebars.registerHelper("json", (context) => {
     const result = JSON.stringify(context, null, 2)
@@ -18,16 +20,34 @@ type HttpRequestData = {
     body?: string
 }
 
-function parseHttpRequestData(data: Record<string, unknown>, nodeId: string): HttpRequestData {
+async function parseHttpRequestData(data: Record<string, unknown>, nodeId: string, publish: Realtime.PublishFn): Promise<HttpRequestData> {
     const { endpoint, variablesName, method, body } = data
 
     if (!endpoint || typeof endpoint !== "string") {
+        await publish(
+            httpRequestChannel().status({
+                nodeId,
+                status: "error",
+            })
+        )
         throw new NonRetriableError(`Endpoint is required for http-request node with id ${nodeId}`)
     }
     if (!variablesName || typeof variablesName !== "string") {
+        await publish(
+            httpRequestChannel().status({
+                nodeId,
+                status: "error",
+            })
+        )
         throw new NonRetriableError(`Variables name is required for http-request node with id ${nodeId}`)
     }
     if (!method || typeof method !== "string") {
+        await publish(
+            httpRequestChannel().status({
+                nodeId,
+                status: "error",
+            })
+        )
         throw new NonRetriableError(`Method is required for http-request node with id ${nodeId}`)
     }
 
@@ -39,8 +59,15 @@ function parseHttpRequestData(data: Record<string, unknown>, nodeId: string): Ht
     }
 }
 
-export const httpRequestExecutor: NodeExecutor = async ({ data, nodeId, context, step }) => {
-    const { endpoint, method, body, variablesName } = parseHttpRequestData(data, nodeId)
+export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({ data, nodeId, context, step, publish }) => {
+    await publish(
+        httpRequestChannel().status({
+            nodeId,
+            status: "loading"
+        })
+    )
+
+    const { endpoint, method, body, variablesName } = await parseHttpRequestData(data, nodeId, publish)
 
     const result = await step.run(`http-request`, async () => {
         const resolvedEndpoint = Handlebars.compile(endpoint)(context)
@@ -60,11 +87,11 @@ export const httpRequestExecutor: NodeExecutor = async ({ data, nodeId, context,
             ? await response.json()
             : await response.text()
 
-
+        const compiledVariablesName = Handlebars.compile(variablesName)(context)
 
         return {
             ...context,
-            [variablesName]: {
+            [compiledVariablesName]: {
                 httpResponse: {
                     status: response.status,
                     statusText: response.statusText,
@@ -73,6 +100,13 @@ export const httpRequestExecutor: NodeExecutor = async ({ data, nodeId, context,
             },
         }
     })
+
+    await publish(
+        httpRequestChannel().status({
+            nodeId,
+            status: "success",
+        })
+    )
 
     return result
 }
