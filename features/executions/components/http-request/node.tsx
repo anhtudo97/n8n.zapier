@@ -1,6 +1,6 @@
 "use client"
 
-import { httpRequestChannel } from '@/inngest/channels/http-request'
+import { HTTP_REQUEST_CHANNEL_NAME, httpRequestChannel } from '@/inngest/channels/http-request'
 import { Node, NodeProps, useReactFlow } from '@xyflow/react'
 import { GlobeIcon } from 'lucide-react'
 import { memo, useState } from 'react'
@@ -25,7 +25,7 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
     const description = nodeData.endpoint ? `${nodeData.method || "GET"} ${nodeData.endpoint}` : "Not configured yet"
     const nodeStatus = useNodeStatus({
         nodeId: props.id,
-        channel: httpRequestChannel().name,
+        channel: HTTP_REQUEST_CHANNEL_NAME,
         topic: "status",
         refreshToken: fetchHttRequestRealtimeToken
     })

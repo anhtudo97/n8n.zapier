@@ -69,44 +69,54 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({ data,
 
     const { endpoint, method, body, variablesName } = await parseHttpRequestData(data, nodeId, publish)
 
-    const result = await step.run(`http-request`, async () => {
-        const resolvedEndpoint = Handlebars.compile(endpoint)(context)
+    try {
+        const result = await step.run(`http-request`, async () => {
+            const resolvedEndpoint = Handlebars.compile(endpoint)(context)
 
-        const options: KyOptions = { method }
+            const options: KyOptions = { method }
 
-        if (["POST", "PUT", "PATCH"].includes(method)) {
-            const resolved = Handlebars.compile(body || "{}")(context)
-            JSON.parse(resolved) // Validate JSON
-            options.body = resolved
-            options.headers = { "Content-Type": "application/json" }
-        }
+            if (["POST", "PUT", "PATCH"].includes(method)) {
+                const resolved = Handlebars.compile(body || "{}")(context)
+                JSON.parse(resolved) // Validate JSON
+                options.body = resolved
+                options.headers = { "Content-Type": "application/json" }
+            }
 
-        const response = await ky(resolvedEndpoint, options)
-        const contentType = response.headers.get("content-type") || ""
-        const responseData = contentType.includes("application/json")
-            ? await response.json()
-            : await response.text()
+            const response = await ky(resolvedEndpoint, options)
+            const contentType = response.headers.get("content-type") || ""
+            const responseData = contentType.includes("application/json")
+                ? await response.json()
+                : await response.text()
 
-        const compiledVariablesName = Handlebars.compile(variablesName)(context)
+            const compiledVariablesName = Handlebars.compile(variablesName)(context)
 
-        return {
-            ...context,
-            [compiledVariablesName]: {
-                httpResponse: {
-                    status: response.status,
-                    statusText: response.statusText,
-                    data: responseData,
+            return {
+                ...context,
+                [compiledVariablesName]: {
+                    httpResponse: {
+                        status: response.status,
+                        statusText: response.statusText,
+                        data: responseData,
+                    },
                 },
-            },
-        }
-    })
-
-    await publish(
-        httpRequestChannel().status({
-            nodeId,
-            status: "success",
+            }
         })
-    )
 
-    return result
+        await publish(
+            httpRequestChannel().status({
+                nodeId,
+                status: "success",
+            })
+        )
+
+        return result
+    } catch (error) {
+        await publish(
+            httpRequestChannel().status({
+                nodeId,
+                status: "error",
+            })
+        )
+        throw error
+    }
 }
