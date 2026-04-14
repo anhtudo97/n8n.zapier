@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { CopyIcon } from "lucide-react"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
+import { generateGoogleFormScript } from "./utils"
 
 interface GoogleFormTriggerDialog {
     open: boolean
@@ -90,7 +91,15 @@ export const GoogleFormTriggerDialog = ({ open, onOpenChange }: GoogleFormTrigge
                             <Button
                                 type="button"
                                 variant={"outline"}
-                                onClick={() => {}}
+                                onClick={async () => {
+                                    const script = generateGoogleFormScript(webhookUrl)
+                                    try {
+                                        await navigator.clipboard.writeText(script)
+                                        toast.success("Google Apps Script copied to clipboard")
+                                    } catch {
+                                        toast.error("Failed to copy Google Apps Script")
+                                    }
+                                }}
                             >
                                 <CopyIcon className="size-4 mr-2" />
                                 Copy Google Apps Script
@@ -98,6 +107,30 @@ export const GoogleFormTriggerDialog = ({ open, onOpenChange }: GoogleFormTrigge
                             <p className="text-xs text-muted-foreground">
                                 This script sends a POST request to the webhook URL with the form responses whenever the form is submitted.
                             </p>
+                        </div>
+
+                        <div className="rounded-lg bg-muted p-4 space-y-2">
+                            <h4 className="font-medium text-sm">Avaiable Variables</h4>
+                            <ul className="text-sm text-muted-foreground space-y-1">
+                                <li>
+                                    <code className="bg-background px-1 py-0.5 rounded">
+                                        {"{{googleForm.repondentEmail}}"}
+                                    </code>
+                                    - Respondent&apos;s email
+                                </li>
+                                <li>
+                                    <code className="bg-background px-1 py-0.5 rounded">
+                                        {"{{googleForm.responses['Question Name']}}"}
+                                    </code>
+                                    - Specific answer
+                                </li>
+                                <li>
+                                    <code className="bg-background px-1 py-0.5 rounded">
+                                        {"{{json googleForm.responses}}"}
+                                    </code>
+                                    - All responses as JSON object
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </DialogHeader>
