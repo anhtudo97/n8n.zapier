@@ -5,10 +5,10 @@ import { httpRequestExecutor } from "@/features/executions/components/http-reque
 import { googleFormTriggerExecutor } from "@/features/triggers/components/google-form-trigger/executor"
 
 export const executorRegistry: Record<NodeType, NodeExecutor> = {
-    [NodeType.HTTP_REQUEST]: httpRequestExecutor as NodeExecutor,
+    [NodeType.HTTP_REQUEST]: httpRequestExecutor,
     [NodeType.INITIAL]: manualTriggerExecutor,
     [NodeType.MANUAL_TRIGGER]: manualTriggerExecutor,
-    [NodeType.GOOGLE_FORM_TRIGGER]: googleFormTriggerExecutor as NodeExecutor,
+    [NodeType.GOOGLE_FORM_TRIGGER]: googleFormTriggerExecutor,
 }
 
 export const getExecutor = (type: NodeType): NodeExecutor => {

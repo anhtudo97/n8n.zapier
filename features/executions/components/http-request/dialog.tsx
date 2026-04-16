@@ -19,7 +19,9 @@ const formSchema = z.object({
             .regex(/^[A-Za-z_$][A-Za-z0-9_$]*$/, { message: "Variables name must be start with a letter, underscore, or dollar sign" }),
     endpoint:
         z
-            .url({ message: "Please enter a valid URL" }),
+            // .url({ message: "Please enter a valid URL" }),
+            .string()
+            .min(1, { message: "Endpoint is required" }),
     method:
         z
             .enum(["GET", "POST", "PUT", "DELETE", "PATCH"]),

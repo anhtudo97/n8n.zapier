@@ -14,52 +14,14 @@ Handlebars.registerHelper("json", (context) => {
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
 
 type HttpRequestData = {
-    variablesName: string
-    endpoint: string
-    method: HttpMethod
+    variablesName?: string
+    endpoint?: string
+    method?: HttpMethod
     body?: string
 }
 
-async function parseHttpRequestData(data: Record<string, unknown>, nodeId: string, publish: Realtime.PublishFn): Promise<HttpRequestData> {
-    const { endpoint, variablesName, method, body } = data
-
-    if (!endpoint || typeof endpoint !== "string") {
-        await publish(
-            httpRequestChannel().status({
-                nodeId,
-                status: "error",
-            })
-        )
-        throw new NonRetriableError(`Endpoint is required for http-request node with id ${nodeId}`)
-    }
-    if (!variablesName || typeof variablesName !== "string") {
-        await publish(
-            httpRequestChannel().status({
-                nodeId,
-                status: "error",
-            })
-        )
-        throw new NonRetriableError(`Variables name is required for http-request node with id ${nodeId}`)
-    }
-    if (!method || typeof method !== "string") {
-        await publish(
-            httpRequestChannel().status({
-                nodeId,
-                status: "error",
-            })
-        )
-        throw new NonRetriableError(`Method is required for http-request node with id ${nodeId}`)
-    }
-
-    return {
-        endpoint,
-        variablesName,
-        method: method as HttpMethod,
-        body: typeof body === "string" ? body : undefined,
-    }
-}
-
 export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({ data, nodeId, context, step, publish }) => {
+    const { endpoint, variablesName, method, body } = data
     await publish(
         httpRequestChannel().status({
             nodeId,
@@ -67,10 +29,35 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({ data,
         })
     )
 
-    const { endpoint, method, body, variablesName } = await parseHttpRequestData(data, nodeId, publish)
-
     try {
         const result = await step.run(`http-request`, async () => {
+            if (!endpoint || typeof endpoint !== "string") {
+                await publish(
+                    httpRequestChannel().status({
+                        nodeId,
+                        status: "error",
+                    })
+                )
+                throw new NonRetriableError(`Endpoint is required for http-request node with id ${nodeId}`)
+            }
+            if (!variablesName || typeof variablesName !== "string") {
+                await publish(
+                    httpRequestChannel().status({
+                        nodeId,
+                        status: "error",
+                    })
+                )
+                throw new NonRetriableError(`Variables name is required for http-request node with id ${nodeId}`)
+            }
+            if (!method || typeof method !== "string") {
+                await publish(
+                    httpRequestChannel().status({
+                        nodeId,
+                        status: "error",
+                    })
+                )
+                throw new NonRetriableError(`Method is required for http-request node with id ${nodeId}`)
+            }
             const resolvedEndpoint = Handlebars.compile(endpoint)(context)
 
             const options: KyOptions = { method }
