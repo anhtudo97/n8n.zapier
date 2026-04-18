@@ -35,6 +35,12 @@ const triggerNodes: NodeTypeOption[] = [
         label: "Stripe Trigger",
         description: "Trigger the workflow when a Stripe event occurs.",
         icon: "/stripe.svg"
+    },
+    {
+        type: NodeType.GEMINI,
+        label: "Gemini Trigger",
+        description: "Trigger the workflow when a Gemini event occurs.",
+        icon: "/gemini.svg"
     }
 ]
 

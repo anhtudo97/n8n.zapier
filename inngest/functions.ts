@@ -8,6 +8,7 @@ import { httpRequestChannel } from "./channels/http-request"
 import { manualTriggerChannel } from "./channels/manual-trigger"
 import { googleFormTriggerChannel } from "./channels/google-form-trigger"
 import { stripeTriggerChannel } from "./channels/stripe-trigger"
+import { geminiChannel } from "./channels/gemini"
 
 export const executeWorkflow = inngest.createFunction(
   {
@@ -21,6 +22,7 @@ export const executeWorkflow = inngest.createFunction(
       manualTriggerChannel(),
       googleFormTriggerChannel(),
       stripeTriggerChannel(),
+      geminiChannel()
     ] // This is the channel we will use to send real-time updates about the execution
   },
   async ({ event, step, publish }) => {
