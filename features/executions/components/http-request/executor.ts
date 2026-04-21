@@ -1,9 +1,8 @@
-import ky, { type Options as KyOptions } from 'ky'
 import { NodeExecutor } from "@/features/executions/types"
-import { NonRetriableError } from "inngest"
-import Handlebars from "handlebars"
 import { httpRequestChannel } from '@/inngest/channels/http-request'
-import { Realtime } from '@inngest/realtime'
+import Handlebars from "handlebars"
+import { NonRetriableError } from "inngest"
+import ky, { type Options as KyOptions } from 'ky'
 
 Handlebars.registerHelper("json", (context) => {
     const result = JSON.stringify(context, null, 2)

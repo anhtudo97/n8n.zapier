@@ -10,23 +10,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm, useWatch } from "react-hook-form"
 import z from "zod"
 
-export const AVAIABLE_MODELS = [
-    "gemini-1.5-pro",
-    "gemini-1.0-pro",
-    "gemini-pro",
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-8b",
-]
-
 const formSchema = z.object({
     variablesName:
         z
             .string()
             .min(1, { message: "Variables name is required" })
             .regex(/^[A-Za-z_$][A-Za-z0-9_$]*$/, { message: "Variables name must be start with a letter, underscore, or dollar sign" }),
-    model:
-        z
-            .enum(AVAIABLE_MODELS, { message: "Please select a valid model" }),
     systemPrompt:
         z
             .string()
@@ -52,7 +41,6 @@ export const GeminiDialog = ({ open, onOpenChange, onSubmit, defaultValues = {} 
         resolver: zodResolver(formSchema),
         defaultValues: {
             variablesName: defaultValues.variablesName || "",
-            model: defaultValues.model || AVAIABLE_MODELS[0],
             systemPrompt: defaultValues.systemPrompt || "",
             userPrompt: defaultValues.userPrompt || "",
         }
@@ -88,34 +76,7 @@ export const GeminiDialog = ({ open, onOpenChange, onSubmit, defaultValues = {} 
                                     <FormDescription>
                                         Use this name to reference the result in other nodes:
                                         {" "}
-                                        {`{{${watchVariablesName}.text}}`},
-                                    </FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="model"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Model</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <FormControl>
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Select a model" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {AVAIABLE_MODELS.map(model => (
-                                                <SelectItem key={model} value={model}>
-                                                    {model}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormDescription>
-                                        Choose the Gemini model you want to use for this request.
+                                        {`{{${watchVariablesName}.aiResponse.text}}`},
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
