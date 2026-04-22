@@ -25,16 +25,16 @@ const formSchema = z.object({
             .min(1, { message: "User prompt is required" }),
 })
 
-export type GeminiFormValues = z.infer<typeof formSchema>
+export type OpenAiFormValues = z.infer<typeof formSchema>
 
-interface GeminiDialog {
+interface OpenAiDialog {
     open: boolean
     onOpenChange: (open: boolean) => void
-    onSubmit: (values: GeminiFormValues) => void
-    defaultValues?: Partial<GeminiFormValues>
+    onSubmit: (values: OpenAiFormValues) => void
+    defaultValues?: Partial<OpenAiFormValues>
 }
 
-export const GeminiDialog = ({ open, onOpenChange, onSubmit, defaultValues = {} }: GeminiDialog) => {
+export const OpenAiDialog = ({ open, onOpenChange, onSubmit, defaultValues = {} }: OpenAiDialog) => {
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -56,9 +56,9 @@ export const GeminiDialog = ({ open, onOpenChange, onSubmit, defaultValues = {} 
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Gemini Request</DialogTitle>
+                    <DialogTitle>OpenAI Request</DialogTitle>
                     <DialogDescription>
-                        Trigger an Gemini request configuration.
+                        Trigger an OpenAI request configuration.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>

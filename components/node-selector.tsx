@@ -41,6 +41,12 @@ const triggerNodes: NodeTypeOption[] = [
         label: "Gemini Trigger",
         description: "Trigger the workflow when a Gemini event occurs.",
         icon: "/gemini.svg"
+    },
+    {
+        type: NodeType.OPENAI,
+        label: "OpenAI Trigger",
+        description: "Trigger the workflow when an OpenAI event occurs.",
+        icon: "/openai.svg"
     }
 ]
 
