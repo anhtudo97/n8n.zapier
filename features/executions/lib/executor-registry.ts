@@ -6,6 +6,7 @@ import { stripeTriggerExecutor } from "@/features/triggers/components/stripe-tri
 import { NodeType } from "@/generated/prisma/enums"
 import { NodeExecutor } from "../types"
 import { OpenAiExecutor } from "../components/openai/executor"
+import { AnthropicExecutor } from "../components/anthropic/executor"
 
 export const executorRegistry: Record<NodeType, NodeExecutor> = {
     [NodeType.HTTP_REQUEST]: httpRequestExecutor,
@@ -14,7 +15,7 @@ export const executorRegistry: Record<NodeType, NodeExecutor> = {
     [NodeType.GOOGLE_FORM_TRIGGER]: googleFormTriggerExecutor,
     [NodeType.STRIPE_TRIGGER]: stripeTriggerExecutor,
     [NodeType.GEMINI]: GeminiExecutor,
-    [NodeType.ANTHROPIC]: GeminiExecutor, // TODO: replace with AnthropicExecutor when it's ready
+    [NodeType.ANTHROPIC]: AnthropicExecutor,
     [NodeType.OPENAI]: OpenAiExecutor
 }
 

@@ -10,6 +10,7 @@ import { googleFormTriggerChannel } from "./channels/google-form-trigger"
 import { stripeTriggerChannel } from "./channels/stripe-trigger"
 import { geminiChannel } from "./channels/gemini"
 import { openaiChannel } from "./channels/openai"
+import { anthropicChannel } from "./channels/anthropic"
 
 export const executeWorkflow = inngest.createFunction(
   {
@@ -24,7 +25,8 @@ export const executeWorkflow = inngest.createFunction(
       googleFormTriggerChannel(),
       stripeTriggerChannel(),
       geminiChannel(),
-      openaiChannel()
+      openaiChannel(),
+      anthropicChannel(),
     ] // This is the channel we will use to send real-time updates about the execution
   },
   async ({ event, step, publish }) => {

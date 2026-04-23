@@ -20,6 +20,7 @@
     "ngrok:dev": "dotenv -e .env -- ngrok http --url=$NGROK_URL 3000"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.71",
     "@ai-sdk/google": "^3.0.10",
     "@ai-sdk/openai": "^3.0.53",
     "@hookform/resolvers": "^5.2.2",

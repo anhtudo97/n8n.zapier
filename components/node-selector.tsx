@@ -47,6 +47,12 @@ const triggerNodes: NodeTypeOption[] = [
         label: "OpenAI Trigger",
         description: "Trigger the workflow when an OpenAI event occurs.",
         icon: "/openai.svg"
+    },
+    {
+        type: NodeType.ANTHROPIC,
+        label: "Anthropic Trigger",
+        description: "Trigger the workflow when an Anthropic event occurs.",
+        icon: "/anthropic.svg"
     }
 ]
 
