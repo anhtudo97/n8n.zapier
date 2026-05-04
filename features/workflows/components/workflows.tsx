@@ -11,7 +11,7 @@ import { Workflow } from '@/generated/prisma/client'
 import { WorkflowIcon } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
-export const WorkflosSearch = () => {
+export const WorkflowsSearch = () => {
     const [params, setParams] = useWorkflowsParams()
     const { searchValue, onSearchChange } = useEntitySearch({
         params,
@@ -95,7 +95,7 @@ export const WorkflowsContainer = ({ children }: PropsWithChildren) => {
     return (
         <EntityContainer
             header={<WorkflowsHeader />}
-            search={<WorkflosSearch />}
+            search={<WorkflowsSearch />}
             pagination={<WorkflowsPagination />}
         >
             {children}

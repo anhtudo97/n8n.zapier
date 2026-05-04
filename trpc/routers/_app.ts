@@ -5,7 +5,7 @@ import { createTRPCRouter, premiumProcedure } from "../init"
 
 export const appRouter = createTRPCRouter({
   workflows: workflowsRouter,
-  credentails: credentialsRouter,
+  credentials: credentialsRouter,
   testAi: premiumProcedure.mutation(async () => {
     await inngest.send({
       name: "execute/ai"
