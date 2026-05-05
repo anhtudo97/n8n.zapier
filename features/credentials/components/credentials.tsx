@@ -1,15 +1,15 @@
 "use client"
 
 import { EmptyView, EntityContainer, EntityHeader, EntityItem, EntityList, EntityPagination, EntitySearch, ErrorView, LoadingView } from '@/components/entity-components'
+import { Credential, CredentialType } from '@/generated/prisma/client'
 import { useEntitySearch } from '@/hooks/use-entity-search'
-import { useUpgradeModal } from '@/hooks/use-upgrade-modal'
 import { formatDistanceToNow } from 'date-fns'
 import { WorkflowIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { PropsWithChildren } from 'react'
-import { useCreateCredential, useRemoveCredential, useSuspenseCredentials } from '../hooks/use-creadentials'
+import { useRemoveCredential, useSuspenseCredentials } from '../hooks/use-creadentials'
 import { useCredentialsParams } from '../hooks/use-credentials-params'
-import { Credential } from '@/generated/prisma/client'
+import Image from 'next/image'
 
 export const CredentialsSearch = () => {
     const [params, setParams] = useCredentialsParams()
@@ -108,12 +108,20 @@ export const CredentialsEmpty = () => {
     )
 }
 
+const crendentialLogos: Record<CredentialType, string> = {
+    [CredentialType.OPENAI]: "/openai.svg",
+    [CredentialType.GEMINI]: "/gemini.svg",
+    [CredentialType.ANTHROPIC]: "/anthropic.svg",
+}
+
 export const CredentialItem = ({ credential }: { credential: Credential }) => {
     const removeCredential = useRemoveCredential()
 
     const handleRemoveCredential = () => {
         removeCredential.mutate({ id: credential.id })
     }
+
+    const logo = crendentialLogos[credential.type] || "/openai.svg"
 
     return (
         <EntityItem
@@ -128,7 +136,7 @@ export const CredentialItem = ({ credential }: { credential: Credential }) => {
             }
             image={
                 <div className="size-8 flex items-center justify-center">
-                    <WorkflowIcon className="size-5 text-muted-foreground" />
+                    <Image src={logo} alt={credential.name} width={20} height={20} />
                 </div>
             }
             onRemove={handleRemoveCredential}

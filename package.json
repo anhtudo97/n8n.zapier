@@ -16,7 +16,7 @@
     "db:push": "npx prisma db push",
     "db:seed": "npx prisma db seed",
     "inngest:dev": "inngest-cli dev",
-    "dev:all": "mprocs",
+    "dev:all": "concurrently -n \"next,inngest\" -c \"cyan,yellow\" \"next dev\" \"inngest-cli dev\"",
     "ngrok:dev": "dotenv -e .env -- ngrok http --url=$NGROK_URL 3000"
   },
   "dependencies": {
@@ -105,6 +105,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/toposort": "^2.0.7",
+    "concurrently": "^9.2.1",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",

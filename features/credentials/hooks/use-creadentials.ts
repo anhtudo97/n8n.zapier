@@ -64,22 +64,22 @@ export const useSuspenseCredential = (id: string) => {
 }
 
 /**
- * Custom hook to update a workflow's nodes and connections.
- * @returns A mutation object that can be used to trigger the update of a workflow's nodes and connections.
+ * Custom hook to update a credential.
+ * @returns A mutation object that can be used to trigger the update of a credential.
  */
-export const useUpdateWorkflow = () => {
+export const useUpdateCredential = () => {
     const queryClient = useQueryClient()
     const trpc = useTRPC()
 
     return useMutation(
-        trpc.workflows.update.mutationOptions({
+        trpc.credentials.update.mutationOptions({
             onSuccess(data) {
-                toast.success(`Workflow "${data.name}" updated successfully!`)
-                queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}))
-                queryClient.invalidateQueries(trpc.workflows.getOne.queryOptions({ id: data.id }))
+                toast.success(`Credential "${data.name}" updated successfully!`)
+                queryClient.invalidateQueries(trpc.credentials.getMany.queryOptions({}))
+                queryClient.invalidateQueries(trpc.credentials.getOne.queryOptions({ id: data.id }))
             },
             onError(error) {
-                toast.error(`Failed to update workflow: ${error.message}`)
+                toast.error(`Failed to update credential: ${error.message}`)
             }
         })
     )
