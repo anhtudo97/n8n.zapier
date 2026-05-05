@@ -1,6 +1,6 @@
 # n8n.zapier
 
-A workflow automation SaaS platform built with Next.js 16, featuring visual workflow building, AI execution, and subscription-based access control.
+A workflow automation SaaS platform built with Next.js 16, featuring visual workflow building, multi-provider AI execution, triggers, and credential management.
 
 ## Tech Stack
 
@@ -8,9 +8,9 @@ A workflow automation SaaS platform built with Next.js 16, featuring visual work
 - **API:** tRPC v11 + TanStack Query
 - **Database:** PostgreSQL + Prisma 7
 - **Auth:** Better Auth (email/password)
-- **Background Jobs:** Inngest
+- **Background Jobs:** Inngest (real-time channels)
 - **Payments:** Polar
-- **AI:** Google Gemini via AI SDK
+- **AI Providers:** Anthropic, Google Gemini, OpenAI via AI SDK
 - **Workflow UI:** React Flow (@xyflow/react)
 - **UI:** shadcn/ui + Radix UI + Tailwind CSS v4
 - **Monitoring:** Sentry
@@ -70,28 +70,37 @@ npm run inngest:dev  # Start local Inngest dev server
 
 ```
 Client → tRPC (TanStack Query) → tRPC Router → Procedure → Prisma (DB)
-                                                          ↘ Inngest (async jobs)
+                                                          ↘ Inngest (async workflow execution)
+                                                                    ↘ Real-time channels (per node type)
 ```
 
 ### Directory Structure
 
 ```
 app/
-├── (auth)/          # Login/register pages
-├── (dashboard)/     # Protected dashboard routes (workflows, subscriptions)
-└── api/             # Route handlers: auth/, trpc/, inngest/
+├── (auth)/              # Login/register pages
+├── (dashboard)/
+│   ├── (rest)/          # Dashboard routes (workflows, credentials, executions)
+│   └── (editor)/        # Workflow editor (React Flow canvas)
+└── api/                 # Route handlers: auth/, trpc/, inngest/
 
-features/            # Domain-organized feature modules
-├── workflows/       # Workflow CRUD (components/, hooks/, server/)
-├── auth/            # Auth-related UI
-└── subscriptions/   # Polar subscription UI
+features/                # Domain-organized feature modules
+├── workflows/           # Workflow CRUD (components/, hooks/, server/)
+├── credentials/         # Credential management (Anthropic, Gemini, OpenAI)
+├── executions/          # Execution runner and node status tracking
+│   └── components/      # Per-node executors: gemini/, openai/, anthropic/, http-request/
+├── triggers/            # Trigger node implementations
+│   └── components/      # manual-trigger/, google-form-trigger/, stripe-trigger/
+├── editor/              # Workflow editor state (Jotai atoms)
+├── auth/                # Auth-related UI
+└── subscriptions/       # Polar subscription UI
 
-trpc/                # tRPC setup: init.ts, routers/_app.ts
-lib/                 # Shared singletons: auth.ts, db.ts, polar.ts
-inngest/             # Background job functions and client
-components/          # Shared UI components (shadcn/ui)
-prisma/              # Schema and migrations
-generated/prisma/    # Auto-generated Prisma client (never edit manually)
+trpc/                    # tRPC setup: init.ts, routers/_app.ts
+lib/                     # Shared singletons: auth.ts, db.ts, polar.ts
+inngest/                 # Background job functions, client, channels, utils
+components/              # Shared UI components (shadcn/ui)
+prisma/                  # Schema and migrations
+generated/prisma/        # Auto-generated Prisma client (never edit manually)
 ```
 
 ### tRPC Procedures
@@ -102,11 +111,31 @@ generated/prisma/    # Auto-generated Prisma client (never edit manually)
 | `protectedProcedure` | Yes | No |
 | `premiumProcedure` | Yes | Yes (Polar) |
 
-### Background Jobs (Inngest)
+### Node Types
 
-Handles async AI execution. Functions registered at `app/api/inngest/route.ts`.
+| Category | Type | Description |
+|---|---|---|
+| Triggers | `MANUAL_TRIGGER` | Start workflow manually |
+| Triggers | `GOOGLE_FORM_TRIGGER` | Trigger from Google Form submission |
+| Triggers | `STRIPE_TRIGGER` | Trigger from Stripe webhook events |
+| Actions | `HTTP_REQUEST` | Make outbound HTTP calls |
+| AI | `ANTHROPIC` | Claude models via Anthropic API |
+| AI | `GEMINI` | Gemini models via Google AI |
+| AI | `OPENAI` | GPT models via OpenAI API |
 
-- `execute-ai` — Gemini AI text generation via AI SDK
+### Credentials
+
+Credentials are stored per-user and scoped to provider type (`ANTHROPIC`, `GEMINI`, `OPENAI`). Nodes reference a credential by ID; the executor resolves the API key at runtime.
+
+### Workflow Execution (Inngest)
+
+Workflows are executed as Inngest functions (`execute-workflow`). The engine:
+1. Loads workflow nodes and connections from DB
+2. Topologically sorts nodes to resolve execution order
+3. Runs each node executor sequentially, passing output context to the next node
+4. Publishes real-time status updates via per-node-type channels
+
+Real-time channels: `http-request`, `manual-trigger`, `google-form-trigger`, `stripe-trigger`, `gemini`, `openai`, `anthropic`.
 
 ### Payments (Polar)
 
