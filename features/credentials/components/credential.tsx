@@ -9,10 +9,10 @@ import { CredentialType } from "@/generated/prisma/enums"
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import z from "zod"
-import { useCreateCredential, useUpdateCredential } from "../hooks/use-creadentials"
+import { useCreateCredential, useSuspenseCredential, useUpdateCredential } from "../hooks/use-creadentials"
 
 const credentialSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -191,4 +191,10 @@ export const CredentialForm = ({ initialData }: CredentialFormProps) => {
             </Card>
         </>
     )
+}
+
+export const CredentialView = ({ crententialId }: { crententialId: string }) => {
+    const { data: credential } = useSuspenseCredential(crententialId)
+
+    return <CredentialForm initialData={credential} />
 }

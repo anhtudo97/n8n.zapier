@@ -1,15 +1,15 @@
 "use client"
 
 import { EmptyView, EntityContainer, EntityHeader, EntityItem, EntityList, EntityPagination, EntitySearch, ErrorView, LoadingView } from '@/components/entity-components'
-import { Credential, CredentialType } from '@/generated/prisma/client'
+import type { Credential } from '@/generated/prisma/client'
+import { CredentialType } from '@/generated/prisma/enums'
 import { useEntitySearch } from '@/hooks/use-entity-search'
 import { formatDistanceToNow } from 'date-fns'
-import { WorkflowIcon } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { PropsWithChildren } from 'react'
 import { useRemoveCredential, useSuspenseCredentials } from '../hooks/use-creadentials'
 import { useCredentialsParams } from '../hooks/use-credentials-params'
-import Image from 'next/image'
 
 export const CredentialsSearch = () => {
     const [params, setParams] = useCredentialsParams()

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(Get-ChildItem -Recurse \"e:\\\\Code\\\\JS\\\\n8n.zapier\\\\features\\\\credentials\")",
+      "Bash(Select-Object FullName)",
+      "Bash(cd \"e:/Code/JS/n8n.zapier\" && sed -i \"s|import { Credential, CredentialType } from '@/generated/prisma/client'|import type { Credential } from '@/generated/prisma/client'\\\\nimport { CredentialType } from '@/generated/prisma/enums'|\" \"features/credentials/components/credentials.tsx\")"
+    ],
+    "additionalDirectories": [
+      "e:\\Code\\JS\\n8n.zapier\\features\\credentials\\components"
+    ]
+  }
+}
