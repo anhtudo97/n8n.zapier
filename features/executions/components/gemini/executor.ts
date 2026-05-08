@@ -64,7 +64,7 @@ export const GeminiExecutor: NodeExecutor<GeminiData> = async ({ data, nodeId, c
         : "You are a helpful assistant that tries to answer the user's question as best as you can."
 
     const userPrompt = Handlebars.compile(data.userPrompt)(context)
-    console.log("data", data.credentialId)
+
     const credential = await step.run("get-credential", () => {
         return prisma.credential.findUnique({
             where: {

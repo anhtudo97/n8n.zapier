@@ -1,5 +1,6 @@
 import { NodeExecutor } from "@/features/executions/types"
 import { anthropicChannel } from "@/inngest/channels/anthropic"
+import prisma from "@/lib/db"
 import { createAnthropic } from "@ai-sdk/anthropic"
 import { generateText } from "ai"
 import Handlebars from "handlebars"
@@ -16,6 +17,7 @@ type AnthropicData = {
     model?: string
     systemPrompt?: string
     userPrompt?: string
+    credentialId?: string
 }
 
 export const AnthropicExecutor: NodeExecutor<AnthropicData> = async ({ data, nodeId, context, step, publish }) => {
@@ -26,6 +28,16 @@ export const AnthropicExecutor: NodeExecutor<AnthropicData> = async ({ data, nod
             status: "loading"
         })
     )
+
+    if (!data.credentialId || typeof data.credentialId !== "string") {
+        await publish(
+            anthropicChannel().status({
+                nodeId,
+                status: "error",
+            })
+        )
+        throw new NonRetriableError(`Credential ID is required for gemini node with id ${nodeId}`)
+    }
 
     if (!data.variablesName || typeof data.variablesName !== "string") {
         await publish(
@@ -53,10 +65,21 @@ export const AnthropicExecutor: NodeExecutor<AnthropicData> = async ({ data, nod
 
     const userPrompt = Handlebars.compile(data.userPrompt)(context)
 
-    const credentialValue = process.env.ANTHROPIC_API_KEY
+    const credential = await step.run("get-credential", () => {
+        return prisma.credential.findUnique({
+            where: {
+                id: data.credentialId!
+            }
+        })
+    })
+
+    if (!credential) {
+        throw new NonRetriableError(`Credential with ID ${data.credentialId} not found for gemini node with id ${nodeId}`)
+    }
+    // const credentialValue = process.env.ANTHROPIC_API_KEY
 
     const anthropic = createAnthropic({
-        apiKey: credentialValue
+        apiKey: credential.value
     })
 
     try {

@@ -4,8 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { useCredentialsByType } from "@/features/credentials/hooks/use-creadentials"
+import { CredentialType } from "@/generated/prisma/browser"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Image from "next/image"
+import { useEffect } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import z from "zod"
 
@@ -23,6 +28,10 @@ const formSchema = z.object({
         z
             .string()
             .min(1, { message: "User prompt is required" }),
+    credentialId:
+        z
+            .string()
+            .min(1, { message: "Credential is required" }),
 })
 
 export type AnthropicFormValues = z.infer<typeof formSchema>
@@ -36,14 +45,31 @@ interface AnthropicDialog {
 
 export const AnthropicDialog = ({ open, onOpenChange, onSubmit, defaultValues = {} }: AnthropicDialog) => {
 
+    const {
+        data: credentials,
+        isLoading: credentialsLoading,
+    } = useCredentialsByType(CredentialType.ANTHROPIC)
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            credentialId: defaultValues.credentialId || "",
             variablesName: defaultValues.variablesName || "",
             systemPrompt: defaultValues.systemPrompt || "",
             userPrompt: defaultValues.userPrompt || "",
         }
     })
+
+    useEffect(() => {
+        if (open) {
+            form.reset({
+                credentialId: defaultValues.credentialId || "",
+                variablesName: defaultValues.variablesName || "",
+                systemPrompt: defaultValues.systemPrompt || "",
+                userPrompt: defaultValues.userPrompt || "",
+            })
+        }
+    }, [open, defaultValues, form])
 
     const watchVariablesName = useWatch({ control: form.control, name: "variablesName", defaultValue: defaultValues.variablesName || "API call" })
 
@@ -77,6 +103,47 @@ export const AnthropicDialog = ({ open, onOpenChange, onSubmit, defaultValues = 
                                         {" "}
                                         {`{{${watchVariablesName}.aiResponse.text}}`},
                                     </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="credentialId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Anthropic Credential</FormLabel>
+                                    <Select
+                                        onValueChange={(value) => field.onChange(value)}
+                                        defaultValue={field.value}
+                                        disabled={credentialsLoading || !credentials?.length}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select an Anthropic Credential" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {
+                                                credentials?.map(option => (
+                                                    <SelectItem
+                                                        key={option.id}
+                                                        value={option.id}
+                                                    >
+                                                        <div className="flex items-center gap-2">
+                                                            <Image
+                                                                src="/anthropic.svg"
+                                                                alt="Anthropic Logo"
+                                                                width={16}
+                                                                height={16}
+                                                            />
+                                                            {option.name}
+                                                        </div>
+                                                    </SelectItem>
+                                                ))
+                                            }
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}
