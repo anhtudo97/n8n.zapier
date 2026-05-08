@@ -12,6 +12,8 @@ type GeminiNodeData = {
     model?: string
     systemPrompt?: string
     userPrompt?: string
+    credentialId?: string
+    variablesName?: string
 }
 
 type GeminiNodeType = Node<GeminiNodeData>

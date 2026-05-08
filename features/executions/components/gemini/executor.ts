@@ -4,6 +4,7 @@ import Handlebars from "handlebars"
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
 import { generateText } from "ai"
 import { NonRetriableError } from "inngest"
+import prisma from "@/lib/db"
 
 Handlebars.registerHelper("json", (context) => {
     const result = JSON.stringify(context, null, 2)
@@ -16,6 +17,7 @@ type GeminiData = {
     model?: string
     systemPrompt?: string
     userPrompt?: string
+    credentialId?: string
 }
 
 export const GeminiExecutor: NodeExecutor<GeminiData> = async ({ data, nodeId, context, step, publish }) => {
@@ -37,6 +39,16 @@ export const GeminiExecutor: NodeExecutor<GeminiData> = async ({ data, nodeId, c
         throw new NonRetriableError(`Variables name is required for gemini node with id ${nodeId}`)
     }
 
+    if (!data.credentialId || typeof data.credentialId !== "string") {
+        await publish(
+            geminiChannel().status({
+                nodeId,
+                status: "error",
+            })
+        )
+        throw new NonRetriableError(`Credential ID is required for gemini node with id ${nodeId}`)
+    }
+
     if (!data.userPrompt || typeof data.userPrompt !== "string") {
         await publish(
             geminiChannel().status({
@@ -52,11 +64,23 @@ export const GeminiExecutor: NodeExecutor<GeminiData> = async ({ data, nodeId, c
         : "You are a helpful assistant that tries to answer the user's question as best as you can."
 
     const userPrompt = Handlebars.compile(data.userPrompt)(context)
+    console.log("data", data.credentialId)
+    const credential = await step.run("get-credential", () => {
+        return prisma.credential.findUnique({
+            where: {
+                id: data.credentialId!
+            }
+        })
+    })
 
-    const credentialValue = process.env.GOOGLE_GENERATIVE_AI_API_KEY
+    if (!credential) {
+        throw new NonRetriableError(`Credential with ID ${data.credentialId} not found for gemini node with id ${nodeId}`)
+    }
+
+    // const credentialValue = process.env.GOOGLE_GENERATIVE_AI_API_KEY
 
     const google = createGoogleGenerativeAI({
-        apiKey: credentialValue
+        apiKey: credential.value,
     })
 
     try {

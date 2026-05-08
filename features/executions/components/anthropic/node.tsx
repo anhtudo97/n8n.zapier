@@ -12,6 +12,7 @@ type AnthropicNodeData = {
     model?: string
     systemPrompt?: string
     userPrompt?: string
+    credentialId?: string
 }
 
 type AnthropicNodeType = Node<AnthropicNodeData>
