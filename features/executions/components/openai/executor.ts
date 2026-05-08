@@ -1,5 +1,6 @@
 import { NodeExecutor } from "@/features/executions/types"
 import { openaiChannel } from "@/inngest/channels/openai"
+import prisma from "@/lib/db"
 import { createOpenAI } from '@ai-sdk/openai'
 import { generateText } from "ai"
 import Handlebars from "handlebars"
@@ -16,6 +17,7 @@ type OpenAiData = {
     model?: string
     systemPrompt?: string
     userPrompt?: string
+    credentialId?: string
 }
 
 export const OpenAiExecutor: NodeExecutor<OpenAiData> = async ({ data, nodeId, context, step, publish }) => {
@@ -26,6 +28,17 @@ export const OpenAiExecutor: NodeExecutor<OpenAiData> = async ({ data, nodeId, c
             status: "loading"
         })
     )
+
+    if (!data.credentialId || typeof data.credentialId !== "string") {
+        await publish(
+            openaiChannel().status({
+                nodeId,
+                status: "error",
+            })
+        )
+        throw new NonRetriableError(`Credential ID is required for OpenAI node with id ${nodeId}`)
+    }
+
 
     if (!data.variablesName || typeof data.variablesName !== "string") {
         await publish(
@@ -53,10 +66,23 @@ export const OpenAiExecutor: NodeExecutor<OpenAiData> = async ({ data, nodeId, c
 
     const userPrompt = Handlebars.compile(data.userPrompt)(context)
 
-    const credentialValue = process.env.OPENAI_API_KEY
+    const credential = await step.run("get-credential", () => {
+        return prisma.credential.findUnique({
+            where: {
+                id: data.credentialId!
+            }
+        })
+    })
+
+
+    if (!credential) {
+        throw new NonRetriableError(`Credential with ID ${data.credentialId} not found for gemini node with id ${nodeId}`)
+    }
+
+    // const credentialValue = process.env.OPENAI_API_KEY
 
     const openai = createOpenAI({
-        apiKey: credentialValue
+        apiKey: credential.value
     })
 
     try {
