@@ -18,7 +18,6 @@ type GeminiData = {
     systemPrompt?: string
     userPrompt?: string
     credentialId?: string
-    userId: string
 }
 
 export const GeminiExecutor: NodeExecutor<GeminiData> = async ({ data, nodeId, context, step, userId, publish }) => {
