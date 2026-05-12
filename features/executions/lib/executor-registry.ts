@@ -1,12 +1,13 @@
+import { AnthropicExecutor } from "@/features/executions/components/anthropic/executor"
+import { DiscordExecutor } from "@/features/executions/components/discord/executor"
 import { GeminiExecutor } from "@/features/executions/components/gemini/executor"
 import { httpRequestExecutor } from "@/features/executions/components/http-request/executor"
+import { OpenAiExecutor } from "@/features/executions/components/openai/executor"
 import { googleFormTriggerExecutor } from "@/features/triggers/components/google-form-trigger/executor"
 import { manualTriggerExecutor } from "@/features/triggers/components/manual-trigger/executor"
 import { stripeTriggerExecutor } from "@/features/triggers/components/stripe-trigger/executor"
 import { NodeType } from "@/generated/prisma/enums"
 import { NodeExecutor } from "../types"
-import { OpenAiExecutor } from "../components/openai/executor"
-import { AnthropicExecutor } from "../components/anthropic/executor"
 
 export const executorRegistry: Record<NodeType, NodeExecutor> = {
     [NodeType.HTTP_REQUEST]: httpRequestExecutor,
@@ -16,7 +17,9 @@ export const executorRegistry: Record<NodeType, NodeExecutor> = {
     [NodeType.STRIPE_TRIGGER]: stripeTriggerExecutor,
     [NodeType.GEMINI]: GeminiExecutor,
     [NodeType.ANTHROPIC]: AnthropicExecutor,
-    [NodeType.OPENAI]: OpenAiExecutor
+    [NodeType.OPENAI]: OpenAiExecutor,
+    [NodeType.DISCORD]: DiscordExecutor,
+    [NodeType.SLACK]: DiscordExecutor,
 }
 
 export const getExecutor = (type: NodeType): NodeExecutor => {

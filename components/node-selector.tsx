@@ -53,7 +53,13 @@ const triggerNodes: NodeTypeOption[] = [
         label: "Anthropic Trigger",
         description: "Trigger the workflow when an Anthropic event occurs.",
         icon: "/anthropic.svg"
-    }
+    },
+    {
+        type: NodeType.DISCORD,
+        label: "Discord Trigger",
+        description: "Trigger the workflow when a Discord event occurs.",
+        icon: "/discord.svg"
+    },
 ]
 
 const executionNodes: NodeTypeOption[] = [
