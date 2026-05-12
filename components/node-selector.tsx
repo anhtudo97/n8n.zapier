@@ -60,6 +60,12 @@ const triggerNodes: NodeTypeOption[] = [
         description: "Trigger the workflow when a Discord event occurs.",
         icon: "/discord.svg"
     },
+    {
+        type: NodeType.SLACK,
+        label: "Slack Trigger",
+        description: "Trigger the workflow when a Slack event occurs.",
+        icon: "/slack.svg"
+    },
 ]
 
 const executionNodes: NodeTypeOption[] = [

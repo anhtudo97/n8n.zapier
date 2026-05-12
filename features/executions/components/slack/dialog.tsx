@@ -16,37 +16,31 @@ const formSchema = z.object({
             .string()
             .min(1, { message: "Variables name is required" })
             .regex(/^[A-Za-z_$][A-Za-z0-9_$]*$/, { message: "Variables name must be start with a letter, underscore, or dollar sign" }),
-    username:
-        z
-            .string()
-            .optional(),
     content:
         z
             .string()
-            .min(1, { message: "Content is required" })
-            .max(2000, { message: "Content must be less than 2000 characters" }),
+            .min(1, { message: "Content is required" }),
     webhookUrl:
         z
             .string()
             .min(1, { message: "Webhook URL is required" }),
 })
 
-export type DiscordFormValues = z.infer<typeof formSchema>
+export type SlackFormValues = z.infer<typeof formSchema>
 
-interface DiscordDialog {
+interface SlackDialog {
     open: boolean
     onOpenChange: (open: boolean) => void
-    onSubmit: (values: DiscordFormValues) => void
-    defaultValues?: Partial<DiscordFormValues>
+    onSubmit: (values: SlackFormValues) => void
+    defaultValues?: Partial<SlackFormValues>
 }
 
-export const DiscordDialog = ({ open, onOpenChange, onSubmit, defaultValues = {} }: DiscordDialog) => {
+export const SlackDialog = ({ open, onOpenChange, onSubmit, defaultValues = {} }: SlackDialog) => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             variablesName: defaultValues.variablesName || "",
             webhookUrl: defaultValues.webhookUrl || "",
-            username: defaultValues.username || "",
             content: defaultValues.content || "",
         }
     })
@@ -56,13 +50,12 @@ export const DiscordDialog = ({ open, onOpenChange, onSubmit, defaultValues = {}
             form.reset({
                 webhookUrl: defaultValues.webhookUrl || "",
                 variablesName: defaultValues.variablesName || "",
-                username: defaultValues.username || "",
                 content: defaultValues.content || "",
             })
         }
     }, [open, defaultValues, form])
 
-    const watchVariablesName = useWatch({ control: form.control, name: "variablesName", defaultValue: defaultValues.variablesName || "Discord" })
+    const watchVariablesName = useWatch({ control: form.control, name: "variablesName", defaultValue: defaultValues.variablesName || "Slack" })
 
     const onFormSubmit = (values: z.infer<typeof formSchema>) => {
         onSubmit(values)
@@ -73,9 +66,9 @@ export const DiscordDialog = ({ open, onOpenChange, onSubmit, defaultValues = {}
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Discord Configuration</DialogTitle>
+                    <DialogTitle>Slack Configuration</DialogTitle>
                     <DialogDescription>
-                        Configure the Discord node settings.
+                        Configure the Slack node settings.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -105,10 +98,10 @@ export const DiscordDialog = ({ open, onOpenChange, onSubmit, defaultValues = {}
                                 <FormItem>
                                     <FormLabel>Webhook URL</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="Enter your Discord webhook URL" />
+                                        <Input {...field} placeholder="Enter your Slack webhook URL" />
                                     </FormControl>
                                     <FormDescription>
-                                        Get this from Discord: Channel Settings &gt; Integrations &gt; Webhooks &gt; New Webhook
+                                        Get this from Slack: Workspace Settings &gt; Workflows &gt; Webhooks &gt; New Webhook
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -128,22 +121,6 @@ export const DiscordDialog = ({ open, onOpenChange, onSubmit, defaultValues = {}
                                     </FormControl>
                                     <FormDescription>
                                         Sets the behavior of the model. For example, you can use it to instruct the model to act as a specific character or to provide responses in a certain style.
-                                    </FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                       <FormField 
-                            control={form.control}
-                            name="username"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Bot username (optional)</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} placeholder="Enter your Discord bot username" />
-                                    </FormControl>
-                                    <FormDescription>
-                                        If not set, it will use the default username of the webhook.
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
