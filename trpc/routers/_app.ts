@@ -1,21 +1,12 @@
 import { credentialsRouter } from "@/features/credentials/server/router"
+import { executionsRouter } from "@/features/executions/server/router"
 import { workflowsRouter } from "@/features/workflows/server/router"
-import { inngest } from "@/inngest/client"
-import { createTRPCRouter, premiumProcedure } from "../init"
+import { createTRPCRouter } from "../init"
 
 export const appRouter = createTRPCRouter({
   workflows: workflowsRouter,
   credentials: credentialsRouter,
-  testAi: premiumProcedure.mutation(async () => {
-    await inngest.send({
-      name: "execute/ai"
-    })
-
-    return {
-      success: true,
-      message: "AI execution started"
-    }
-  })
+  executions: executionsRouter,
 })
 // export type definition of API
 export type AppRouter = typeof appRouter

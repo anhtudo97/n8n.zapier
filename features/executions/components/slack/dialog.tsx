@@ -103,6 +103,9 @@ export const SlackDialog = ({ open, onOpenChange, onSubmit, defaultValues = {} }
                                     <FormDescription>
                                         Get this from Slack: Workspace Settings &gt; Workflows &gt; Webhooks &gt; New Webhook
                                     </FormDescription>
+                                    <FormDescription>
+                                        Make sure the &quot;key&quot; is &quot;content&quot;
+                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
