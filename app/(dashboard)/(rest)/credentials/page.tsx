@@ -11,7 +11,6 @@ type Props = {
   searchParams: Promise<SearchParams>
 }
 
-
 const Page = async ({ searchParams }: Props) => {
   await requireAuth()
 
