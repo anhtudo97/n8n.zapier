@@ -1,4 +1,4 @@
-import { CredentialsList } from "@/features/credentials/components/credentials"
+import { ExecutionsContainer, ExecutionsError, ExecutionsList, ExecutionsLoading } from "@/features/executions/components/executions"
 import { executionsParamsLoader } from "@/features/executions/server/params-loader"
 import { prefetchExecutions } from "@/features/executions/server/prefetch"
 import { requireAuth } from "@/lib/auth-utils"
@@ -18,15 +18,15 @@ const Page = async ({ searchParams }: Props) => {
   prefetchExecutions(params)
 
   return (
-    <>
+    <ExecutionsContainer>
       <HydrateClient>
-        <ErrorBoundary fallback={<></>}>
-          <Suspense fallback={<></>}>
-            <h1>Executions</h1>
+        <ErrorBoundary fallback={<ExecutionsError />}>
+          <Suspense fallback={<ExecutionsLoading />}>
+            <ExecutionsList />
           </Suspense>
         </ErrorBoundary>
       </HydrateClient >
-    </ >
+    </ExecutionsContainer>
   )
 }
 
