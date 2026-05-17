@@ -1,6 +1,7 @@
 import { NodeExecutor } from "@/features/executions/types"
 import { openaiChannel } from "@/inngest/channels/openai"
 import prisma from "@/lib/db"
+import { decrypt } from "@/lib/encryption"
 import { createOpenAI } from '@ai-sdk/openai'
 import { generateText } from "ai"
 import Handlebars from "handlebars"
@@ -83,7 +84,7 @@ export const OpenAiExecutor: NodeExecutor<OpenAiData> = async ({ data, nodeId, c
     // const credentialValue = process.env.OPENAI_API_KEY
 
     const openai = createOpenAI({
-        apiKey: credential.value
+        apiKey: decrypt(credential.value),
     })
 
     try {

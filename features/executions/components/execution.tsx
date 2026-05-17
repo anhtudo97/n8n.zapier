@@ -1,3 +1,5 @@
+"use client"
+
 import { ExecutionStatus } from "@/generated/prisma/enums"
 import { CheckCircle2Icon, ClockIcon, Loader2Icon, XCircleIcon } from "lucide-react"
 import { useSuspenseExecution } from "../hooks/use-executions"
@@ -130,11 +132,9 @@ export const ExecutionView = ({ executionId }: ExecutionProps) => {
                 {
                     execution.output && (
                         <div className="mt-6 p-4 bg-green-50 rounded-md space-y-3">
-                            <div>
-                                <p className="text-sm font-medium text-muted-foreground">Output</p>
+                            <p className="text-sm font-medium text-muted-foreground">Output</p>
 
-                                <pre className="text-sm text-green-600 font-mono whitespace-pre-wrap overflow-auto">{JSON.stringify(execution.output, null, 2)}</pre>
-                            </div>
+                            <pre className="text-sm text-green-600 font-mono whitespace-pre-wrap overflow-auto">{JSON.stringify(execution.output, null, 2)}</pre>
                         </div>
                     )
                 }
