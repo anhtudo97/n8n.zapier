@@ -30,6 +30,34 @@ export const LoginForm = () => {
     }
   })
 
+  const signInWithGithub = async () => {
+    await authClient.signIn.social({
+      provider: "github"
+    }, {
+      onSuccess: () => {
+        router.push("/")
+      },
+      onError: ({ error }) => {
+        console.error("Github login failed:", error)
+        toast.error(`Github login failed: ${error.message}`)
+      }
+    })
+  }
+
+  const signInWithGoogle = async () => {
+    await authClient.signIn.social({
+      provider: "google"
+    }, {
+      onSuccess: () => {
+        router.push("/")
+      },
+      onError: ({ error }) => {
+        console.error("Google login failed:", error)
+        toast.error(`Google login failed: ${error.message}`)
+      }
+    })
+  }
+
   const onSubmit = async (values: LoginFormValues) => {
     // Handle login logic here
     await authClient.signIn.email(
@@ -64,11 +92,11 @@ export const LoginForm = () => {
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="grid gap-6">
                 <div className="flex flex-col gap-4">
-                  <Button variant={"outline"} className="w-full" type="button" disabled={isPending}>
+                  <Button variant={"outline"} className="w-full" type="button" disabled={isPending} onClick={signInWithGithub}>
                     <Image src={"/logos/github.svg"} alt="Github logo" width={20} height={20} className="mr-2" />
                     Continue with Github
                   </Button>
-                  <Button variant={"outline"} className="w-full" type="button" disabled={isPending}>
+                  <Button variant={"outline"} className="w-full" type="button" disabled={isPending} onClick={signInWithGoogle}>
                     <Image src={"/logos/google.svg"} alt="Google logo" width={20} height={20} className="mr-2" />
                     Continue with Google
                   </Button>
